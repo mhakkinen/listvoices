@@ -1,0 +1,118 @@
+<html lang="en-us">
+  <head>
+    <meta charset="UTF-8">
+    <title>List Current Available TTS Voices</title>
+    <style>
+    body {
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+      table {
+        border-collapse: collapse;
+        border: 1px solid black;
+        width: 100%;
+      }
+      th, td {
+        text-align: left;
+        padding: 8px;
+        border: 1px solid black;
+      }
+      th {
+        background-color: navy;
+        color: white;
+      }
+    </style>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bowser/2.4.0/bundled.js"></script>
+
+
+
+
+  </head>
+  <body onload="initPage()">
+    <h1>List of TTS Voices Available to this Browser</h1>
+    <button id="getVoicesButton">Get Voices</button>
+    <p id="platform"></p>
+    <p id="result" aria-live="polite"></p>
+  
+    <table id="voicesTable">
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>Voice Name</th>
+          <th>Language</th>
+          <th>Default</th>
+          <th>Local</th>
+          <th>URI</th>
+        </tr>
+      </thead>
+      <tbody id="voicesTableBody">
+      
+      </tbody>
+    </table>
+<footer><h2>About this page:</h2>
+    <h3>Version 0.1 on 5 March 2023</h3>
+<p>The W3C WebSpeech API for SPeech Synthesis makes it possible to send textual content from a web page to by spoken by a speech synthesizer.  Today's platforms come with a variety of pre-installed speech synthesiser
+    engines.  This pages will retrieve a list of the local TTS engines.  I have noted some inconsistencies in how default and voiceURI data is returned by browsers. Something to investigate.
+</p>
+<p>If you have questions, feel free to reach out to me at mhakkinen at acm.org or file an issue on <a href="https://github.com/mhakkinen/listvoices">github</a>.  Also, if you are interested in TTS on the web, check out the <a href="https://www.w3.org/WAI/APA/task-forces/pronunciation/">W3C Pronunciation Task Force</a>.</p>
+</footer>
+
+
+    <script>
+        var voices;
+      // Define the function to create the rows in the table
+      function createRow(index, voice) {
+        var row = document.createElement("tr");
+        var numCell = document.createElement("td");
+        numCell.innerHTML = index;
+        row.appendChild(numCell);
+        var nameCell = document.createElement("td");
+        nameCell.innerHTML = voice.name;
+        row.appendChild(nameCell);
+        var langCell = document.createElement("td");
+        langCell.innerHTML = voice.lang;
+        row.appendChild(langCell);
+        var defaultCell = document.createElement("td");
+        defaultCell.innerHTML = voice.default ? "Yes" : "No";
+        row.appendChild(defaultCell);
+        var localCell = document.createElement("td");
+        localCell.innerHTML = voice.localService ? "Yes" : "No";
+        row.appendChild(localCell);
+        var uriCell = document.createElement("td");
+        uriCell.innerHTML = voice.voiceURI;
+        row.appendChild(uriCell);
+        return row;
+      }
+      
+      // Add a click event listener to the "Get Voices" button
+      var getVoicesButton = document.getElementById("getVoicesButton");
+      getVoicesButton.addEventListener("click", function() {
+       
+        var browser = bowser.getParser(window.navigator.userAgent);
+        var browserName = browser.getBrowserName();
+        var browserVersion = browser.getBrowserVersion();
+        document.getElementById("platform").innerHTML = "Broswer: " + browserName + " Version: "+browserVersion+" on "+ navigator.platform; voices = speechSynthesis.getVoices();
+
+        var tableBody = document.getElementById("voicesTableBody");
+        // Clear any existing rows from the table body
+        while (tableBody.firstChild) {
+          tableBody.removeChild(tableBody.firstChild);
+        }
+        // Add a row to the table for each available voice
+        for (var i = 0; i < voices.length; i++) {
+          var row = createRow(i+1, voices[i]);
+          tableBody.appendChild(row);
+        }
+        // Show the table if it was hidden
+        var voicesTable = document.getElementById("voicesTable");
+        voicesTable.style.display = "table";
+        document.getElementById("result").innerHTML=i.toString()+" Voices Available."
+      });
+
+    function initPage() { 
+
+        voices = speechSynthesis.getVoices();
+    }
+</script>
+</body>
+</html>
